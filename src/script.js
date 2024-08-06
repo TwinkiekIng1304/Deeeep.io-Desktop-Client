@@ -104,38 +104,70 @@ document.addEventListener("DOMContentLoaded", () => {
   // Terrain/Pet Swapper
   // { "<url>": "<asset alias>" }
   const cachedCustomPets = {};
+  const cachedCustomTerrain = {};
 
-  async function loadPixiAsset (type, url) {
+  async function loadPixiAsset (type, url, returnAsAlias = true) {
     const id = randomIdentifier();
     const assetName = `${type}_${id}.png`
-    await PixiAssets.load({
+    const texture = await PixiAssets.load({
       alias: [assetName],
       src: url,
       data: {
         ignoreMultiPack: true
       }
     });
-    return `${id}.png`;
+    if (returnAsAlias) {
+      return type === "pet" ? `${id}.png` : assetName;
+    } else {
+      return texture;
+    }
   };
 
   const petInput = document.getElementById("pet-input")
   const petCustomInput = document.getElementById("pet-custom-input")
-  // const terrainInput = document.getElementById("terrain-input").value
-  // const terrainCustomInput = document.getElementById("terrain-custom-input").value
   const petBtn = document.getElementById("pet-btn")
   const terrainBtn = document.getElementById("terrain-btn")
   petInput.value = data.docassets.Config.pet
   petCustomInput.value = data.docassets.Config.customPet
-  terrainBtn.addEventListener("click", () => {
-    alert("Sorry, it's under construction 🛠")
+
+  terrainBtn.addEventListener("click", async () => {
+    const targetTerrain = Number.parseInt(document.getElementById("terrain-input").value)
+    const customUrl = document.getElementById("terrain-custom-input").value
+
+    let cached = cachedCustomTerrain[customUrl]
+    if (!cached) {
+      const texture = await loadPixiAsset("terrain", customUrl, false)
+      cached = cachedCustomPets[customUrl] = texture
+    }
+    const mapObjects = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "terrains"))]
+    if (!mapObjects) return
+
+    mapObjects.terrains.forEach(e => {
+      if (e?.settings?.texture === targetTerrain && e?.shape?.fill?.texture) {
+          try {
+            const points = e.shape.geometry.graphicsData[0].shape.points
+            e.shape.clear()
+            e.shape.beginTextureFill({
+              texture: cached, 
+              color: "ffffff"
+            })
+            e.shape.moveTo(points.shift(), points.shift())
+            while (points.length > 0) {
+                e.shape.lineTo(points.shift(), points.shift())
+            }
+            e.shape.closePath()
+          } catch {}
+      }
+    })
   })
+
   petBtn.addEventListener("click", async () => {
     const targetPet = document.getElementById("pet-input").value
     const customUrl = document.getElementById("pet-custom-input").value
     
     let cached = cachedCustomPets[customUrl]
     if (!cached) {
-      const textureAlias = await loadPixiAsset("pet", customUrl)
+      const textureAlias = await loadPixiAsset("pet", customUrl, true)
       cached = cachedCustomPets[customUrl] = textureAlias
     }
     const objectsManager = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "entitiesList"))]
