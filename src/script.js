@@ -1,5 +1,17 @@
 //console.log(`[DDC Config] ${JSON.stringify(data)}`)
 
+// Hook the PixiJS Assets package
+// https://pixijs.download/v7.2.4/docs/PIXI.Assets.html
+let PixiAssets;
+const ObjectDefineProperty = Object.defineProperty;
+Object.defineProperty = function (...args) {
+	if (args[0]?.loadTextures) {
+		PixiAssets = args[0].Assets;
+		Object.defineProperty = ObjectDefineProperty;
+	}
+	return ObjectDefineProperty.apply(this, args);
+};
+
 document.addEventListener('contextmenu', (e) => e.preventDefault())
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,6 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return originalBind.apply(this, args);
   };
+
+  // Utility functions
+  function randomIdentifier (length = 8) {
+    // Create an array of random numbers
+    let randValues = crypto.getRandomValues(new Uint8Array(length))
+    // We only want the 4 smallest bit of the number (0 - 15)
+    randValues = randValues.map((n) => n & 0b1111)
+    // Convert all the numbers to a hexadecimal digit (0 - f)
+    return Array.from(randValues).map((n) => n.toString(16)).join("")
+  }
 
   const navBar = document.getElementsByClassName("el-row top-right-nav items-center")[0]
   const updateLog = document.createElement("div")
@@ -80,6 +102,22 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 
   // Terrain/Pet Swapper
+  // { "<url>": "<asset alias>" }
+  const cachedCustomPets = {};
+
+  async function loadPixiAsset (type, url) {
+    const id = randomIdentifier();
+    const assetName = `${type}_${id}.png`
+    await PixiAssets.load({
+      alias: [assetName],
+      src: url,
+      data: {
+        ignoreMultiPack: true
+      }
+    });
+    return `${id}.png`;
+  };
+
   const petInput = document.getElementById("pet-input")
   const petCustomInput = document.getElementById("pet-custom-input")
   // const terrainInput = document.getElementById("terrain-input").value
@@ -91,11 +129,26 @@ document.addEventListener("DOMContentLoaded", () => {
   terrainBtn.addEventListener("click", () => {
     alert("Sorry, it's under construction 🛠")
   })
-  petBtn.addEventListener("click", () => {
-    data.docassets.Config.pet = document.getElementById("pet-input").value
-    data.docassets.Config.customPet = document.getElementById("pet-custom-input").value
-    updateConfig(data)
-    reload()
+  petBtn.addEventListener("click", async () => {
+    const targetPet = document.getElementById("pet-input").value
+    const customUrl = document.getElementById("pet-custom-input").value
+    
+    let cached = cachedCustomPets[customUrl]
+    if (!cached) {
+      const textureAlias = await loadPixiAsset("pet", customUrl)
+      cached = cachedCustomPets[customUrl] = textureAlias
+    }
+    const objectsManager = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "entitiesList"))]
+    if (!objectsManager) return
+
+    objectsManager.entitiesList.forEach((entity) => {
+      if (entity?.petData?.asset === targetPet) {
+        entity.petData.asset = cached
+        entity.updateTexture()
+      }
+    })
+
+    console.log(`[DDC Pet Swapper] ${targetPet} -> ${customUrl}`)
   })
 
   // Multi-Swap
