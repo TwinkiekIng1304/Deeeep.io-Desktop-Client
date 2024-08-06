@@ -126,6 +126,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // https://pixijs.download/v7.2.4/docs/PIXI.Assets.html
+  const allowedContentTypes = ["avif", "webp", "apng", "png", "jpeg", "gif", "svg+xml"].map((type) => `image/${type}`)
+  async function checkUrl (url) {
+    const response = await fetch(url, {
+        method: 'HEAD'
+    });
+    const contentType = response.headers.get("Content-Type");
+    return allowedContentTypes.includes(contentType)
+  };
+
   const petBtn = document.getElementById("pet-btn")
   const terrainBtn = document.getElementById("terrain-btn")
 
@@ -133,6 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
   terrainBtn.addEventListener("click", async () => {
     const targetTerrain = Number.parseInt(document.getElementById("terrain-input").value)
     const customUrl = document.getElementById("terrain-custom-input").value
+
+    const urlValid = await checkUrl(customUrl)
+    if (!urlValid) return alert("Invalid URL")
 
     // Check if the given URL is a texture that has been loaded before
     let cached = cachedCustomTerrain[customUrl]
@@ -176,6 +189,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const targetPet = document.getElementById("pet-input").value
     const customUrl = document.getElementById("pet-custom-input").value
     
+    const urlValid = await checkUrl(customUrl)
+    if (!urlValid) return alert("Invalid URL")
+
     // Check if the given URL is a texture that has been loaded before
     let cached = cachedCustomPets[customUrl]
     if (!cached) {
