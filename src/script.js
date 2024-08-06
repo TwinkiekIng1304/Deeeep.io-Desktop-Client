@@ -3,6 +3,17 @@
 document.addEventListener('contextmenu', (e) => e.preventDefault())
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Hook the gameScene
+  let gameScene;
+  const originalBind = Function.prototype.bind;
+  Function.prototype.bind = function (...args) {
+      if (args[0]?.gameScene) {
+          gameScene = args[0];
+      }
+
+      return originalBind.apply(this, args);
+  };
+
   const navBar = document.getElementsByClassName("el-row top-right-nav items-center")[0]
   const updateLog = document.createElement("div")
   updateLog.innerHTML = `<div class="tr-menu-button ext-yellow" style="padding-right: 4px; padding-left: 4px;"><div class="el-dropdown nice-dropdown" data-v-7db8124a="" data-v-190e0e28=""><button class="el-button el-button--small el-tooltip__trigger btn nice-button yellow has-icon square only-icon el-tooltip__trigger" aria-disabled="false" type="button" id="el-id-9348-12" role="button" tabindex="0" aria-controls="el-id-9348-13" aria-expanded="false" aria-haspopup="menu" data-v-1676d978="" data-v-7db8124a=""><!--v-if--><span class=""><!----><!----></span>
@@ -59,8 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const swapperInput = document.getElementById("swapper-input")
   swapperBtn.addEventListener("click", () => {
     const id = parseInt(swapperInput.value)
-    gameScene.gameScene.game.currentScene.myAnimal.setSkin(id)
-    //console.log(`[DDC Asset Swapper] ${id}`)
+    // We need to try-catch this because gameScene might not exist
+    try {
+      gameScene.gameScene.myAnimals.forEach((animal) => animal.setSkin(id))
+    } catch (error) {
+      console.error(error)
+    }
+    console.log(`[DDC Asset Swapper] ${id}`)
   })
 
   // Terrain/Pet Swapper
