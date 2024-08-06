@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const swapperInput = document.getElementById("swapper-input")
   swapperBtn.addEventListener("click", () => {
     const id = parseInt(swapperInput.value)
-    // We need to try-catch this because gameScene might not exist
     try {
       gameScene.gameScene.myAnimals.forEach((animal) => animal.setSkin(id))
     } catch (error) {
@@ -104,9 +103,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Terrain/Pet Swapper
   // { "<url>": "<asset alias>" }
   const cachedCustomPets = {};
+  // { "<url>": <PIXI.Texture> }
   const cachedCustomTerrain = {};
 
+  // Uses the Pixi Asset loader to load a given image URL as a usable texture
   async function loadPixiAsset (type, url, returnAsAlias = true) {
+    // Generate a "unique" identifier for each asset
+    // This will be internally managed by the swapper
     const id = randomIdentifier();
     const assetName = `${type}_${id}.png`
     const texture = await PixiAssets.load({
@@ -123,30 +126,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const petInput = document.getElementById("pet-input")
-  const petCustomInput = document.getElementById("pet-custom-input")
   const petBtn = document.getElementById("pet-btn")
   const terrainBtn = document.getElementById("terrain-btn")
-  petInput.value = data.docassets.Config.pet
-  petCustomInput.value = data.docassets.Config.customPet
 
+  // Terrain swapper
   terrainBtn.addEventListener("click", async () => {
     const targetTerrain = Number.parseInt(document.getElementById("terrain-input").value)
     const customUrl = document.getElementById("terrain-custom-input").value
 
+    // Check if the given URL is a texture that has been loaded before
     let cached = cachedCustomTerrain[customUrl]
     if (!cached) {
       const texture = await loadPixiAsset("terrain", customUrl, false)
       cached = cachedCustomPets[customUrl] = texture
     }
+    // The property in gameScene containing the terrains list has a mangled name
+    // We need to figure out this mangled name first
     const mapObjects = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "terrains"))]
     if (!mapObjects) return
 
     mapObjects.terrains.forEach(e => {
       if (e?.settings?.texture === targetTerrain && e?.shape?.fill?.texture) {
+          // Clear the Graphics and redraw it
           try {
+            // Create a backup of the points in the old shape
+            // They are stored in this format: [x1, y1, x2, y2, x3, y3, etc...]
             const points = e.shape.geometry.graphicsData[0].shape.points
             e.shape.clear()
+            // The "color" option here actually refers to the texture tint
+            // #FFFFFF means no tint
             e.shape.beginTextureFill({
               texture: cached, 
               color: "ffffff"
@@ -159,22 +167,33 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch {}
       }
     })
+
+    console.log(`[DDC Terrain Swapper] Terrain type ${targetTerrain} -> ${customUrl}`)
   })
 
+  // Pet swapper
   petBtn.addEventListener("click", async () => {
     const targetPet = document.getElementById("pet-input").value
     const customUrl = document.getElementById("pet-custom-input").value
     
+    // Check if the given URL is a texture that has been loaded before
     let cached = cachedCustomPets[customUrl]
     if (!cached) {
       const textureAlias = await loadPixiAsset("pet", customUrl, true)
       cached = cachedCustomPets[customUrl] = textureAlias
     }
+    // The property in gameScene containing the entities list has a mangled name
+    // We need to figure out this mangled name first
     const objectsManager = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "entitiesList"))]
     if (!objectsManager) return
 
     objectsManager.entitiesList.forEach((entity) => {
       if (entity?.petData?.asset === targetPet) {
+        // Update the asset name
+        // Deeeep.io will auto-prefix the asset name with "pet_"
+        // e.g. "fish.png" -> "pet_fish.png"
+        // When loading assets, we have to alias them as "pet_name.png"
+        // But when setting petData.asset, we have to use "name.png"
         entity.petData.asset = cached
         entity.updateTexture()
       }
