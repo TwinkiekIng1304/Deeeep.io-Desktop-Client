@@ -176,6 +176,11 @@
         border-radius: 5px;
         padding: 5px;
     }
+    .ext-dropdown {
+        font-family: inherit;
+        font-size: inherit;
+        width: 100%;
+    }
 
     #extensions {
         right: 50%;
@@ -302,10 +307,51 @@
                         <td>Terrain/Pet Swapper</td>
                         <tr class="option" id="doc-enable">
                             <td>
-                                <input class="ext-input" type="text" placeholder="Enter pet url" id="pet-input">
+                                <!-- <input class="ext-input" type="text" placeholder="Enter pet url" id="pet-input"> -->
+                                <select class="ext-input ext-dropdown" id="pet-input">
+                                    <option value="" disabled="" selected="">Select a pet</option>
+                                    <option value="alfonsino.png">alfonsino.png</option>
+                                    <option value="amphipod.png">amphipod.png</option>
+                                    <option value="blanquillo.png">blanquillo.png</option>
+                                    <option value="combjelly.png">combjelly.png</option>
+                                    <option value="cystisoma.png">cystisoma.png</option>
+                                    <option value="fusilier.png">fusilier.png</option>
+                                    <option value="gunnel.png">gunnel.png</option>
+                                    <option value="killifish.png">killifish.png</option>
+                                    <option value="peapuffer.png">peapuffer.png</option>
+                                    <option value="pineapplefish.png">pineapplefish.png</option>
+                                    <option value="poacher.png">poacher.png</option>
+                                    <option value="scad.png">scad.png</option>
+                                    <option value="shrimp.png">shrimp.png</option>
+                                    <option value="stickleback.png">stickleback.png</option>
+                                    <option value="stubbysquid.png">stubbysquid.png</option>
+                                    <option value="triplefin.png">triplefin.png</option>
+                                </select>
                             </td>
                             <td>
-                                <input class="ext-input" type="text" placeholder="Enter terrain url" id="terrain-input">
+                                <!-- <input class="ext-input" type="text" placeholder="Enter terrain url" id="terrain-input"> -->
+                                <select class="ext-input ext-dropdown" id="terrain-input">
+                                    <option value="" disabled="" selected="">Select a terrain texture</option>
+                                    <option value="1">terrain</option>
+                                    <option value="2">terrain_back</option>
+                                    <option value="3">coldterrain</option>
+                                    <option value="4">coldterrain_back</option>
+                                    <option value="5">deepterrain</option>
+                                    <option value="6">beach</option>
+                                    <option value="7">beach_underwater</option>
+                                    <option value="8">swamp_island</option>
+                                    <option value="9">glacier</option>
+                                    <option value="10">reef</option>
+                                    <option value="11">reef2</option>
+                                    <option value="12">cenote1</option>
+                                    <option value="13">chalk</option>
+                                    <option value="14">clay</option>
+                                    <option value="15">estuarysand</option>
+                                    <option value="16">limestone</option>
+                                    <option value="17">rustymetal</option>
+                                    <option value="18">shallowglacier</option>
+                                    <option value="19">volcanicsand</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>

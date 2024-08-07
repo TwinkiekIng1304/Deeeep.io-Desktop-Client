@@ -1,8 +1,41 @@
 //console.log(`[DDC Config] ${JSON.stringify(data)}`)
 
+// Hook the PixiJS Assets package
+// https://pixijs.download/v7.2.4/docs/PIXI.Assets.html
+let PixiAssets;
+const ObjectDefineProperty = Object.defineProperty;
+Object.defineProperty = function (...args) {
+	if (args[0]?.loadTextures) {
+		PixiAssets = args[0].Assets;
+		Object.defineProperty = ObjectDefineProperty;
+	}
+	return ObjectDefineProperty.apply(this, args);
+};
+
 document.addEventListener('contextmenu', (e) => e.preventDefault())
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Hook the gameScene
+  let gameScene;
+  const originalBind = Function.prototype.bind;
+  Function.prototype.bind = function (...args) {
+      if (args[0]?.gameScene) {
+          gameScene = args[0];
+      }
+
+      return originalBind.apply(this, args);
+  };
+
+  // Utility functions
+  function randomIdentifier (length = 8) {
+    // Create an array of random numbers
+    let randValues = crypto.getRandomValues(new Uint8Array(length))
+    // We only want the 4 smallest bit of the number (0 - 15)
+    randValues = randValues.map((n) => n & 0b1111)
+    // Convert all the numbers to a hexadecimal digit (0 - f)
+    return Array.from(randValues).map((n) => n.toString(16)).join("")
+  }
+
   const navBar = document.getElementsByClassName("el-row top-right-nav items-center")[0]
   const updateLog = document.createElement("div")
   updateLog.innerHTML = `<div class="tr-menu-button ext-yellow" style="padding-right: 4px; padding-left: 4px;"><div class="el-dropdown nice-dropdown" data-v-7db8124a="" data-v-190e0e28=""><button class="el-button el-button--small el-tooltip__trigger btn nice-button yellow has-icon square only-icon el-tooltip__trigger" aria-disabled="false" type="button" id="el-id-9348-12" role="button" tabindex="0" aria-controls="el-id-9348-13" aria-expanded="false" aria-haspopup="menu" data-v-1676d978="" data-v-7db8124a=""><!--v-if--><span class=""><!----><!----></span>
@@ -59,27 +92,130 @@ document.addEventListener("DOMContentLoaded", () => {
   const swapperInput = document.getElementById("swapper-input")
   swapperBtn.addEventListener("click", () => {
     const id = parseInt(swapperInput.value)
-    gameScene.gameScene.game.currentScene.myAnimal.setSkin(id)
-    //console.log(`[DDC Asset Swapper] ${id}`)
+    try {
+      gameScene.gameScene.myAnimals.forEach((animal) => animal.setSkin(id))
+    } catch (error) {
+      console.error(error)
+    }
+    console.log(`[DDC Asset Swapper] ${id}`)
   })
 
   // Terrain/Pet Swapper
-  const petInput = document.getElementById("pet-input")
-  const petCustomInput = document.getElementById("pet-custom-input")
-  // const terrainInput = document.getElementById("terrain-input").value
-  // const terrainCustomInput = document.getElementById("terrain-custom-input").value
+  // { "<url>": "<asset alias>" }
+  const cachedCustomPets = {};
+  // { "<url>": <PIXI.Texture> }
+  const cachedCustomTerrain = {};
+
+  // Uses the Pixi Asset loader to load a given image URL as a usable texture
+  async function loadPixiAsset (type, url, returnAsAlias = true) {
+    // Generate a "unique" identifier for each asset
+    // This will be internally managed by the swapper
+    const id = randomIdentifier();
+    const assetName = `${type}_${id}.png`
+    const texture = await PixiAssets.load({
+      alias: [assetName],
+      src: url,
+      data: {
+        ignoreMultiPack: true
+      }
+    });
+    if (returnAsAlias) {
+      return type === "pet" ? `${id}.png` : assetName;
+    } else {
+      return texture;
+    }
+  };
+
+  // https://pixijs.download/v7.2.4/docs/PIXI.Assets.html
+  const allowedContentTypes = ["avif", "webp", "apng", "png", "jpeg", "gif", "svg+xml"].map((type) => `image/${type}`)
+  async function checkUrl (url) {
+    const response = await fetch(url, {
+        method: 'HEAD'
+    });
+    const contentType = response.headers.get("Content-Type");
+    return allowedContentTypes.includes(contentType)
+  };
+
   const petBtn = document.getElementById("pet-btn")
   const terrainBtn = document.getElementById("terrain-btn")
-  petInput.value = data.docassets.Config.pet
-  petCustomInput.value = data.docassets.Config.customPet
-  terrainBtn.addEventListener("click", () => {
-    alert("Sorry, it's under construction 🛠")
+
+  // Terrain swapper
+  terrainBtn.addEventListener("click", async () => {
+    const targetTerrain = Number.parseInt(document.getElementById("terrain-input").value)
+    const customUrl = document.getElementById("terrain-custom-input").value
+
+    const urlValid = await checkUrl(customUrl)
+    if (!urlValid) return alert("Invalid URL")
+
+    // Check if the given URL is a texture that has been loaded before
+    let cached = cachedCustomTerrain[customUrl]
+    if (!cached) {
+      const texture = await loadPixiAsset("terrain", customUrl, false)
+      cached = cachedCustomPets[customUrl] = texture
+    }
+    // The property in gameScene containing the terrains list has a mangled name
+    // We need to figure out this mangled name first
+    const mapObjects = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "terrains"))]
+    if (!mapObjects) return
+
+    mapObjects.terrains.forEach(e => {
+      if (e?.settings?.texture === targetTerrain && e?.shape?.fill?.texture) {
+          // Clear the Graphics and redraw it
+          try {
+            // Create a backup of the points in the old shape
+            // They are stored in this format: [x1, y1, x2, y2, x3, y3, etc...]
+            const points = e.shape.geometry.graphicsData[0].shape.points
+            e.shape.clear()
+            // The "color" option here actually refers to the texture tint
+            // #FFFFFF means no tint
+            e.shape.beginTextureFill({
+              texture: cached, 
+              color: "ffffff"
+            })
+            e.shape.moveTo(points.shift(), points.shift())
+            while (points.length > 0) {
+                e.shape.lineTo(points.shift(), points.shift())
+            }
+            e.shape.closePath()
+          } catch {}
+      }
+    })
+
+    console.log(`[DDC Terrain Swapper] Terrain type ${targetTerrain} -> ${customUrl}`)
   })
-  petBtn.addEventListener("click", () => {
-    data.docassets.Config.pet = document.getElementById("pet-input").value
-    data.docassets.Config.customPet = document.getElementById("pet-custom-input").value
-    updateConfig(data)
-    reload()
+
+  // Pet swapper
+  petBtn.addEventListener("click", async () => {
+    const targetPet = document.getElementById("pet-input").value
+    const customUrl = document.getElementById("pet-custom-input").value
+    
+    const urlValid = await checkUrl(customUrl)
+    if (!urlValid) return alert("Invalid URL")
+
+    // Check if the given URL is a texture that has been loaded before
+    let cached = cachedCustomPets[customUrl]
+    if (!cached) {
+      const textureAlias = await loadPixiAsset("pet", customUrl, true)
+      cached = cachedCustomPets[customUrl] = textureAlias
+    }
+    // The property in gameScene containing the entities list has a mangled name
+    // We need to figure out this mangled name first
+    const objectsManager = gameScene.gameScene[Object.keys(gameScene.gameScene).find((key) => gameScene.gameScene[key] && Object.hasOwn(gameScene.gameScene[key], "entitiesList"))]
+    if (!objectsManager) return
+
+    objectsManager.entitiesList.forEach((entity) => {
+      if (entity?.petData?.asset === targetPet) {
+        // Update the asset name
+        // Deeeep.io will auto-prefix the asset name with "pet_"
+        // e.g. "fish.png" -> "pet_fish.png"
+        // When loading assets, we have to alias them as "pet_name.png"
+        // But when setting petData.asset, we have to use "name.png"
+        entity.petData.asset = cached
+        entity.updateTexture()
+      }
+    })
+
+    console.log(`[DDC Pet Swapper] ${targetPet} -> ${customUrl}`)
   })
 
   // Multi-Swap

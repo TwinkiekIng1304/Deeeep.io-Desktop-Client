@@ -110,11 +110,11 @@ func CheckAndLogFatal(e error) {
 
 func (p *PluginManager) AddPlugins() {
 	p.AddPlugin(EXTENSION, "Docassets", "docassets", Config{
-		"active": true, 
-		"pet": "", 
+		"active":    true,
+		"pet":       "",
 		"customPet": "",
 	})
-	p.AddPlugin(EXTENSION, "Swapper", "swapper", Config{})
+	// p.AddPlugin(EXTENSION, "Swapper", "swapper", Config{})
 	p.AddPlugin(SCRIPT, "DiscordRPC", "rpc", Config{"active": false})
 	// p.AddPlugin(EXTENSION, "DeeeepioBGM", "deeeepio_bgm", Config{})
 }
