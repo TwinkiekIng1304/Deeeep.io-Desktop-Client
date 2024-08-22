@@ -169,6 +169,9 @@
         flex: 1;
         padding: 10px;
         margin-bottom: 10px;
+        max-height: 307px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .ext-input {
@@ -273,6 +276,7 @@
                     <!-- <div class="ext-pill ext-area" data-name="multi_swap">Multi-Swap</div> -->
                     <div class="ext-pill ext-area" data-name="ter_pet">T/P Swap</div>
                     <div class="ext-pill ext-area" data-name="rpc">DiscordRPC</div>
+                    <div class="ext-pill ext-area" data-name="bgm">BGM</div>
                 </div>
                 <div class="ext-box ext-area ext-pages">
                     <table style="margin: auto;" class="ext-page" id="docassets">
@@ -405,6 +409,80 @@
                                 <div class="checkbox" id="rpc-check">
                                     <div class="checkbox-inner" id="rpc-check-inner"></div>
                                 </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="margin: auto;" class="ext-page hidden" id="bgm">
+                        <tr>
+                            <td>Background music</td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/shallow/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/shallow/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/deep/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/deep/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/shallow/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/shallow/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/deep/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/deep/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="pet-custom-input">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td colspan="2">
+                                <div class="button ext-button ext-red" id="doc-btn">Reload</div>
                             </td>
                         </tr>
                     </table>
