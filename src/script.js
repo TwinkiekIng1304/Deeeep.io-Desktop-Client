@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   Function.prototype.bind = function (...args) {
       if (args[0]?.gameScene) {
           gameScene = args[0];
+          window.gameScene = args[0];
       }
 
       return originalBind.apply(this, args);
@@ -328,6 +329,53 @@ document.addEventListener("DOMContentLoaded", () => {
     rpcCheck.classList.toggle("active")
     rpcCheckInner.classList.toggle("active")
   }
+
+  // Background Music
+  const h = {
+    cold:     0b000001, // 1
+    warm:     0b000010, // 2
+    shallow:  0b000100, // 4
+    deep:     0b001000, // 8
+    fresh:    0b010000, // 16
+    salt:     0b100000, // 32
+  }
+  const habitatCombinations = [
+    h.cold  + h.shallow  + h.fresh,
+    h.cold  + h.shallow  + h.salt,
+    h.cold  + h.deep     + h.fresh,
+    h.cold  + h.deep     + h.salt,
+    h.warm  + h.shallow  + h.fresh,
+    h.warm  + h.shallow  + h.salt,
+    h.warm  + h.deep     + h.fresh,
+    h.warm  + h.deep     + h.salt,
+  ]
+  let oldHabitat = -1
+  setInterval(async () => {
+    if (!gameScene?.gameScene?.myAnimals[0]) return;
+    const habitat = gameScene.gameScene.myAnimals[0]._currentArea
+    if (oldHabitat === habitat) return;
+    oldHabitat = habitat
+    const matchedHabitat = habitatCombinations.find((h) => habitat & h === h)
+    if (!matchedHabitat) return;
+    const youtubeId = data.deeeepio_bgm.Config[`area${matchedHabitat}`]
+    if (youtubeId === "") return;
+    
+    const playbackInfo = JSON.parse(await getYoutubeInfo(youtubeId))
+    const music = playbackInfo?.streamingData?.adaptiveFormats?.find((f) => f.itag === 140);
+
+    const player = document.getElementById("bgm-player")
+    player.src = music.url
+    player.play()
+  }, 5000);
+  for (const habitat of habitatCombinations) {
+    document.getElementById(`bgm-area-${habitat}`).value = data.deeeepio_bgm.Config[`area${habitat}`]
+  }
+  document.getElementById("bgm-btn").addEventListener("click", () => {
+    for (const habitat of habitatCombinations) {
+      data.deeeepio_bgm.Config[`area${habitat}`] = document.getElementById(`bgm-area-${habitat}`).value
+    }
+    updateConfig(data)
+  })
 
   // Shortcut Keys
   const home = document.getElementsByClassName("home-page")[0]

@@ -116,5 +116,14 @@ func (p *PluginManager) AddPlugins() {
 	})
 	// p.AddPlugin(EXTENSION, "Swapper", "swapper", Config{})
 	p.AddPlugin(SCRIPT, "DiscordRPC", "rpc", Config{"active": false})
-	// p.AddPlugin(EXTENSION, "DeeeepioBGM", "deeeepio_bgm", Config{})
+	p.AddPlugin(SCRIPT, "DeeeepioBGM", "deeeepio_bgm", Config{
+		"area21": "",
+		"area22": "",
+		"area25": "",
+		"area26": "",
+		"area37": "",
+		"area38": "",
+		"area41": "",
+		"area42": "",
+	})
 }
