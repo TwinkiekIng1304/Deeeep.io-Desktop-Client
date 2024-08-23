@@ -352,16 +352,33 @@ document.addEventListener("DOMContentLoaded", () => {
   let oldHabitat = -1
   let oldMusicId = ""
   let useSecondPlayer = false
+  function stopMusic() {
+    for (const e of ["bgm-player", "bgm-player2"]) {
+      const player = document.getElementById(e);
+      (async () => {
+        while (Number.parseFloat(player.volume) > 0) {
+          player.volume = (Number.parseFloat(player.volume) - 0.05).toFixed(2)
+          await new Promise((r) => setTimeout(r, 100))
+        }
+        player.pause()
+        player.currentTime = 0
+      })();
+    }
+  }
   setInterval(async () => {
-    if (!gameScene?.gameScene?.myAnimals[0]) return;
+    if (!gameScene?.gameScene?.myAnimals[0]) {
+      oldHabitat = -1
+      return stopMusic()
+    };
+    
     const habitat = gameScene.gameScene.myAnimals[0]._currentArea
     if (oldHabitat === habitat) return;
-    oldHabitat = habitat
     const matchedHabitat = habitatCombinations.find((h) => habitat & h === h)
-    if (!matchedHabitat) return;
+    if (!matchedHabitat) return stopMusic();
     const youtubeId = data.deeeepio_bgm.Config[`area${matchedHabitat}`] || document.getElementById(`bgm-area-${habitat}`).value
-    if (youtubeId === "") return;
+    if (youtubeId === "") return stopMusic();
     if (youtubeId === oldMusicId) return;
+    oldHabitat = habitat
     oldMusicId = youtubeId
     
     const playbackInfo = JSON.parse(await getYoutubeInfo(youtubeId))
@@ -381,7 +398,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     player.volume = "1.00"
     oldPlayer.volume = "0.00"
-    oldPlayer.stop()
+    oldPlayer.pause()
+    oldPlayer.currentTime = 0
   }, 5000);
   for (const habitat of habitatCombinations) {
     document.getElementById(`bgm-area-${habitat}`).value = data.deeeepio_bgm.Config[`area${habitat}`]
