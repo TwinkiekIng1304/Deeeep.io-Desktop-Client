@@ -1,4 +1,8 @@
 <style>
+    *::-webkit-scrollbar {
+        height: .5rem
+    }
+
     .button {
         display: inline-flex;
         justify-content: center;
@@ -71,6 +75,9 @@
     .ext-pill {
         width: max-content;
         padding: 10px;
+        font-size: 14px;
+    }
+    .ext-pill:not(:last-child) {
         margin-right: 10px;
     }
 
@@ -81,6 +88,13 @@
 
     .ext-pill.active {
         background-color: rgb(30, 64, 175);
+    }
+
+    .ext-pill-container {
+        overflow-y: hidden;
+        overflow-x: auto;
+        margin-bottom: 4px;
+        padding-bottom: 4px;
     }
 
     .ext-modal {
@@ -169,6 +183,9 @@
         flex: 1;
         padding: 10px;
         margin-bottom: 10px;
+        max-height: 292px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .ext-input {
@@ -267,12 +284,15 @@
                         data-v-35f7fcad=""></path>
                 </svg></button>
             <div style="flex: 1;" class="text-center flex flex-col">
-                <div class="ext-box flex">
-                    <div class="ext-pill ext-area active" data-name="docassets">DocAssets</div>
-                    <div class="ext-pill ext-area" data-name="swapper">Swapper</div>
-                    <!-- <div class="ext-pill ext-area" data-name="multi_swap">Multi-Swap</div> -->
-                    <div class="ext-pill ext-area" data-name="ter_pet">T/P Swap</div>
-                    <div class="ext-pill ext-area" data-name="rpc">DiscordRPC</div>
+                <div class="ext-box ext-pill-container">
+                    <div style="width: max-content;" class="flex">
+                        <div class="ext-pill ext-area active" data-name="docassets">DocAssets</div>
+                        <div class="ext-pill ext-area" data-name="swapper">Swapper</div>
+                        <!-- <div class="ext-pill ext-area" data-name="multi_swap">Multi-Swap</div> -->
+                        <div class="ext-pill ext-area" data-name="ter_pet">T/P Swap</div>
+                        <div class="ext-pill ext-area" data-name="rpc">DiscordRPC</div>
+                        <div class="ext-pill ext-area" data-name="bgm">BGM</div>
+                    </div>
                 </div>
                 <div class="ext-box ext-area ext-pages">
                     <table style="margin: auto;" class="ext-page" id="docassets">
@@ -304,7 +324,9 @@
                         </tr>
                     </table>
                     <table style="margin: auto;" class="ext-page hidden" id="ter_pet">
-                        <td>Terrain/Pet Swapper</td>
+                        <tr>
+                            <td colspan="2"><center><b>Terrain/Pet Swapper</b></center></td>
+                        </tr>
                         <tr class="option" id="doc-enable">
                             <td>
                                 <!-- <input class="ext-input" type="text" placeholder="Enter pet url" id="pet-input"> -->
@@ -408,11 +430,87 @@
                             </td>
                         </tr>
                     </table>
+                    <table style="margin: auto;" class="ext-page hidden" id="bgm">
+                        <tr>
+                            <td colspan="2"><center><b>Background music</b></center></td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/shallow/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-21">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/shallow/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-37">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/deep/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-25">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>cold/deep/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-41">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/shallow/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-22">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/shallow/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-38">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/deep/fresh</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-26">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td>
+                                <p>warm/deep/salt</p>
+                            </td>
+                            <td>
+                                <input class="ext-input" type="text" placeholder="Enter YouTube video ID" id="bgm-area-42">
+                            </td>
+                        </tr>
+                        <tr class="option">
+                            <td colspan="2">
+                                <div class="button ext-button ext-black" id="bgm-btn">Save</div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<audio src="" id="bgm-player"></audio>
+<audio src="" id="bgm-player2"></audio>
 <!-- <div style="z-index: 100;" class="w-screen h-screen absolute hidden" id="evo-modal">
     <div style="background-color: rgba(0,0,0,.5);" class="w-full h-full absolute"></div>
     <div class="w-full h-full absolute flex justify-center items-center">

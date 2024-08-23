@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"io/ioutil"
@@ -11,6 +13,7 @@ import (
 
 	"image/png"
 	"math/rand"
+	"net/http"
 	"net/url"
 	"os"
 
@@ -93,6 +96,17 @@ func main() {
 			print(err)
 		}
 		save.Close()
+	})
+
+	ui.Bind("getYoutubeInfo", func(id string) string {
+		res, _ := http.Post(
+			"https://music.youtube.com/youtubei/v1/player?prettyPrint=false",
+			"application/json",
+			bytes.NewBuffer([]byte(`{"videoId":"`+id+`","context":{"client":{"clientName":"IOS","clientVersion":"19.09.3"}}}`)),
+		)
+		defer res.Body.Close()
+		body, _ := io.ReadAll(res.Body)
+		return string(body)
 	})
 
 	time.Sleep(5 * time.Second)
