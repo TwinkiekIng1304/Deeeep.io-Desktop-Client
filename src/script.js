@@ -350,6 +350,8 @@ document.addEventListener("DOMContentLoaded", () => {
     h.warm  + h.deep     + h.salt,
   ]
   let oldHabitat = -1
+  let oldMusicId = ""
+  let useSecondPlayer = false
   setInterval(async () => {
     if (!gameScene?.gameScene?.myAnimals[0]) return;
     const habitat = gameScene.gameScene.myAnimals[0]._currentArea
@@ -357,15 +359,29 @@ document.addEventListener("DOMContentLoaded", () => {
     oldHabitat = habitat
     const matchedHabitat = habitatCombinations.find((h) => habitat & h === h)
     if (!matchedHabitat) return;
-    const youtubeId = data.deeeepio_bgm.Config[`area${matchedHabitat}`]
+    const youtubeId = data.deeeepio_bgm.Config[`area${matchedHabitat}`] || document.getElementById(`bgm-area-${habitat}`).value
     if (youtubeId === "") return;
+    if (youtubeId === oldMusicId) return;
+    oldMusicId = youtubeId
     
     const playbackInfo = JSON.parse(await getYoutubeInfo(youtubeId))
     const music = playbackInfo?.streamingData?.adaptiveFormats?.find((f) => f.itag === 140);
 
-    const player = document.getElementById("bgm-player")
+    const player = document.getElementById(useSecondPlayer ? "bgm-player2" : "bgm-player")
+    const oldPlayer = document.getElementById(useSecondPlayer ? "bgm-player" : "bgm-player2")
+    useSecondPlayer = !useSecondPlayer
+    player.volume = "0.00"
+    oldPlayer.volume = "1.00"
     player.src = music.url
     player.play()
+    for (let i = 0; i < 20; i++) {
+      player.volume = (i * 0.05).toFixed(2)
+      oldPlayer.volume = (1 - (i * 0.05)).toFixed(2)
+      await new Promise((r) => setTimeout(r, 100))
+    }
+    player.volume = "1.00"
+    oldPlayer.volume = "0.00"
+    oldPlayer.stop()
   }, 5000);
   for (const habitat of habitatCombinations) {
     document.getElementById(`bgm-area-${habitat}`).value = data.deeeepio_bgm.Config[`area${habitat}`]
