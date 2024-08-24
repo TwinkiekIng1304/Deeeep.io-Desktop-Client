@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 )
 
 type PluginType = uint8
@@ -13,6 +15,18 @@ const (
 	SCRIPT PluginType = iota
 	EXTENSION
 )
+
+func GetCwd() string {
+	if strings.Contains(os.Args[0], "go-build") {
+		var cwd, _ = os.Getwd()
+		return cwd
+	} else {
+		var exec, _ = os.Executable()
+		return filepath.Dir(exec)
+	}
+}
+
+var cwd = GetCwd()
 
 type Config = map[string]interface{}
 
@@ -59,7 +73,6 @@ func (p *PluginManager) AddPlugin(Type PluginType, name string, path string, con
 
 func (p *PluginManager) InitPlugins() string {
 	flag := "--load-extension="
-	var cwd, _ = os.Getwd()
 	for name, plugin := range p.Plugins {
 		ext := "plugins/" + plugin.Path
 		if plugin.Type == EXTENSION {
@@ -90,7 +103,7 @@ func (p *PluginManager) GetConfig() map[string]Config {
 func (p *PluginManager) SaveConfig() {
 	data, err := json.Marshal(p.GetConfig())
 	CheckAndLogFatal(err)
-	err = os.WriteFile("config.json", data, 0644)
+	err = os.WriteFile(path.Join(cwd, "config.json"), data, 0644)
 	CheckAndLogFatal(err)
 }
 
