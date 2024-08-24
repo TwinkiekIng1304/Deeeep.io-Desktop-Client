@@ -1,42 +1,82 @@
-#  name: Build DDC
-#  on: 
-#    push:
-#      branches:
-#        - golang
-#  jobs: 
-#    windows_build64:
-#        name: WinBuild64
-#        runs-on: windows-latest
-#        steps:
-#        - uses: actions/checkout@v2  
-#        - uses: actions/setup-go@v2
-#          with:
-#            go-version: "1.17.1"
-#            run: go build -o dist/win/Deeeep.io-Desktop-Client-64.exe -ldflags -H=windowsgui main.go
-#    windows_build32:
-#        name: WinBuild32
-#        runs-on: windows-latest
-#        steps:
-#        - uses: actions/checkout@v2
-#        - uses: actions/setup-go@v2
-#          with:
-#            go-version: "1.17.1"
-#            run: env GOOS=windows GOARCH=386 go build -o dist/win/Deeeep.io-Desktop-Client-32.exe -ldflags -H=windowsgui main.go
-#    mac_build:
-#        name: MacBuild
-#        runs-on: unbuntu-latest
-#        steps:
-#        - uses: actions/checkout@v2
-#        - uses: actions/setup-go@v2
-#          with:
-#            go-version: "1.17.1"
-#            run: env GOOS=darwin GOARCH=arm64 go build -o dist/mac/Deeeep.io-Desktop-Client-MAC main.go
-#    linux_build:
-#        name: LinuxBuild
-#        runs-on: ubuntu-latest
-#        steps:
-#        - uses: actions/checkout@v2
-#        - uses: actions/setup-go@v2
-#          with:
-#            go-version: "1.17.1"
-#            run: env GOOS=linux GOARCH=arm64 go build -o dist/linux/Deeeep.io-Desktop-Client-LINUX main.go
+name: Build DDC
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        type: string
+        required: true
+
+jobs:
+  windows-build:
+      name: Windows x64
+      runs-on: windows-latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2  
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.20.3"
+
+      - name: Build
+        run: ./build/build-windows.ps1
+        shell: pwsh
+
+      - name: Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{inputs.tag_name}}
+          make_latest: true
+          files: |
+            Deeeep.io-Desktop-Client-Windows.zip
+
+  macos-build:
+      name: Mac OS Universal
+      runs-on: macos-latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2  
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.20.3"
+
+      - name: Build
+        run: ./build/build-macos.sh
+        shell: bash
+  
+      - name: Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{inputs.tag_name}}
+          make_latest: true
+          files: |
+            Deeeep.io-Desktop-Client-MacOS.zip
+
+  linux-build:
+    name: Linux x64
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2  
+
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.20.3"
+
+    - name: Build
+      run: ./build/build-linux.sh
+      shell: bash
+
+    - name: Upload
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{inputs.tag_name}}
+        make_latest: true
+        files: |
+          Deeeep.io-Desktop-Client-Linux.tar.gz
+          
