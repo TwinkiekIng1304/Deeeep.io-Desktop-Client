@@ -4,7 +4,7 @@
 if [ -a "dist" ]; then
     rm -rf "dist"
 fi
-go build -o dist/Deeeep.io-Desktop-Client
+CGO_ENABLED=0 go build -o dist/Deeeep.io-Desktop-Client
 cp -r plugins dist/plugins
 
 # Zip
