@@ -18,10 +18,10 @@ mkdir "$name.app/Contents/MacOS"
 mkdir "$name.app/Contents/Resources"
 
 # Copy main executable
+cp ddc "$name.app/Contents/MacOS/$name"
 
 # Copy plugins
-cp -r plugins "$name.app/Contents/MacOS"
-cp ddc "$name.app/Contents/MacOS/$name"
+cp -r plugins "$name.app/Contents/MacOS/plugins"
 
 # Create info.plist
 echo "<?xml version="1.0" encoding="UTF-8"?>
