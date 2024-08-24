@@ -42,5 +42,8 @@ echo "<?xml version="1.0" encoding="UTF-8"?>
 # Create app icon
 cp build/icon.icns "$name.app/Contents/Resources/AppIcon.icns"
 
+# Sign with empty certificate
+codesign --force --deep -s - "$name.app"
+
 # Zip
 zip -rq "Deeeep.io-Desktop-Client-MacOS.zip" "$name.app" -x "*.DS_Store"
