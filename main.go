@@ -17,7 +17,7 @@ import (
 	"net/url"
 	"os"
 
-	// "os/exec"
+	"os/exec"
 
 	core "github.com/SirReadsALot/deep_desktop/src"
 	"github.com/vova616/screenshot"
@@ -157,10 +157,9 @@ type Release struct {
 	Tag string `json:"tag_name"`
 }
 
-
 func CheckUpdate() {
 	update := make(chan string)
-	
+
 	resp, err := http.Get(SRC)
 	CheckAndLogFatal(err)
 	defer resp.Body.Close()
@@ -179,6 +178,3 @@ func CheckUpdate() {
 	core.DiscordRPC()
 	update <- ""
 }
-
-
-

@@ -28,8 +28,21 @@ The Deeeep.io Desktop Client is a free and open source desktop app made with go 
 - [x] Linux amd64 version
 - [x] Linux 386 version
 
+## Installing
 
-## Installation
+### Windows
+
+To install:
+```ps
+iwr -useb https://raw.githubusercontent.com/SirReadsALot/Deeeep.io-Desktop-Client/golang/installers/install-windows.ps1 | iex
+```
+
+To uninstall:
+```ps
+iwr -useb https://raw.githubusercontent.com/SirReadsALot/Deeeep.io-Desktop-Client/golang/installers/uninstall-windows.ps1 | iex
+```
+
+## Running from source code
 
 This application requires [go](https://go.dev/) to be installed.
 
