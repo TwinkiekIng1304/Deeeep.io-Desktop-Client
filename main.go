@@ -57,8 +57,23 @@ func main() {
 		<style>
 		*{padding: 0; margin: 0; overflow: hidden}
 		#loading{text-align: center; font-size: 40px; font-weight: bold; position:relative; z-index: 2; color: white;}
+		#img{width:1110; height:735}
 		</style>
-		<img id="img" src="https://sralcodeproj.netlify.app/assets/myhailot.png" loading="lazy" style="object-fit: cover">
+		<img id="img" loading="lazy" style="object-fit: cover">
+		<script>
+		var IMG = document.getElementById('img')
+		ls = ['https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot2.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/ftyk.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew1.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew2.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew3.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/jhmm82.png']
+
+		function rand(kl) {const randInx = Math.floor(Math.random() * kl.length); const item = kl[randInx]; return item}
+		const link = rand(ls)
+		IMG.setAttribute('src', link)
+		</script>
 		</html>
 	`), "", 1120, 740, flags, "--remote-allow-origins=*") // previous: 887x586
 	CheckAndLogFatal(err)
@@ -109,7 +124,7 @@ func main() {
 		return string(body)
 	})
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(4 * time.Second)
 	//println(plugins.QueryPlugins())
 	ui.Load(`https://deeeep.io` + plugins.QueryPlugins())
 	ui.SetBounds(lorca.Bounds{
