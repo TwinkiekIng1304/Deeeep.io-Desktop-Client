@@ -6,6 +6,7 @@ function Build-DCC {
 
         go build -o dist/Deeeep.io-Desktop-Client.exe
         xcopy plugins dist\plugins\ /E /Q /Y
+        xcopy screenshots dist\screenshots\ /E /Q /Y
         $CompressParams = @{
             CompressionLevel = "Optimal"
             Force            = $true
