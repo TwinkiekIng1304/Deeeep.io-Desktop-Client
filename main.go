@@ -124,7 +124,7 @@ func main() {
 		return string(body)
 	})
 
-	time.Sleep(4 * time.Second)
+	time.Sleep(5 * time.Second)
 	//println(plugins.QueryPlugins())
 	ui.Load(`https://deeeep.io` + plugins.QueryPlugins())
 	ui.SetBounds(lorca.Bounds{
