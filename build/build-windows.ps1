@@ -4,7 +4,7 @@ function Build-DCC {
             Remove-Item -Path "dist" -Force -Recurse
         }
 
-        go build -o dist/Deeeep.io-Desktop-Client.exe
+        go build -o dist/Deeeep.io-Desktop-Client.exe -ldflags -H=windowsgui
         xcopy plugins dist\plugins\ /E /Q /Y
         xcopy screenshots dist\screenshots\ /E /Q /Y
         $CompressParams = @{
