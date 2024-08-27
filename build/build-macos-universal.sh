@@ -19,6 +19,8 @@ cp ddc "$name.app/Contents/MacOS/$name"
 # Copy plugins
 cp -r plugins "$name.app/Contents/MacOS/plugins"
 
+cp -r "$name.app/Contents/MacOS/screenshots"
+
 # Create info.plist
 echo "<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
