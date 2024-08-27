@@ -68,7 +68,7 @@ func main() {
 		ls = ['https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot2.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/ftyk.png',
-			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew1.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew2.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew3.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/jhmm82.png']
