@@ -11,7 +11,7 @@ function Write-Done {
 
 function Get-DDC {
     begin {
-        $latestRelease = Invoke-RestMethod -Uri 'https://api.github.com/repos/akanecco23/Deeeep.io-Desktop-Client/releases/latest'
+        $latestRelease = Invoke-RestMethod -Uri 'https://api.github.com/repos/SirReadsALot/Deeeep.io-Desktop-Client/releases/latest'
         $targetVersion = $latestRelease.tag_name
     }
     process {
@@ -19,7 +19,7 @@ function Get-DDC {
         Write-Host -Object "$targetVersion" -NoNewline -ForegroundColor 'Blue'
         Write-Host -Object "..." -NoNewline
         $Parameters = @{
-            Uri             = "https://github.com/akanecco23/Deeeep.io-Desktop-Client/releases/download/$targetVersion/Deeeep.io-Desktop-Client-Windows.zip"
+            Uri             = "https://github.com/SirReadsALot/Deeeep.io-Desktop-Client/releases/download/$targetVersion/Deeeep.io-Desktop-Client-Windows.zip"
             UseBasicParsing = $true
             OutFile         = $DownloadPath
         }
