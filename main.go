@@ -33,6 +33,9 @@ var script []byte
 //go:embed src/index.html
 var index []byte
 
+//go:embed src/icon.js
+var iconScript []byte
+
 //var index, _ = os.ReadFile("./src/index.html")
 //var script, _ = os.ReadFile("./src/script.js")
 
@@ -52,7 +55,7 @@ func main() {
 		<html>
 		<head>
 		<title>Deeeep.io Desktop Client</title>
-		<link rel="icon" href="./assets/favicon.ico">
+		<link rel="shortcut icon"type="image/x-icon" href="data:image/x-icon;,">
 		</head>
 		<style>
 		*{padding: 0; margin: 0; overflow: hidden}
@@ -65,7 +68,7 @@ func main() {
 		ls = ['https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot2.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/myhailot.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/ftyk.png',
-			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew1.png',
+			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew2.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/megamew3.png',
 			  'https://raw.githubusercontent.com/SirReadsALot/sralcodeproj/main/assets/jhmm82.png']
@@ -76,6 +79,7 @@ func main() {
 		</script>
 		</html>
 	`), "", 1120, 740, flags, "--remote-allow-origins=*") // previous: 887x586
+	ui.Eval(string(iconScript))
 	CheckAndLogFatal(err)
 
 	// <-update
@@ -150,6 +154,7 @@ func EvalDefaultScripts(ref *lorca.UI, plugins core.PluginManager) {
 	ui := *ref
 	config, _ := json.Marshal(plugins.GetConfig())
 	data, _ := json.Marshal(plugins.Plugins)
+	ui.Eval(string(iconScript))
 	ui.Eval(
 		"const config = " + string(config) +
 			";const data = " + string(data) +
