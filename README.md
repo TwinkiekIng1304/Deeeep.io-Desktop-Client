@@ -23,8 +23,7 @@ The Deeeep.io Desktop Client is a free and open source desktop app made with go 
 
 - [x] Windows 64-bit version
 - [x] Windows 32-bit version
-- [x] Mac amd64 version
-- [x] Mac 386 version
+- [x] Mac universal version
 - [x] Linux amd64 version
 - [x] Linux 386 version
 
@@ -70,6 +69,13 @@ go build -o dist/Deeeep.io-Desktop-Client.exe
 or by doing:
 ```
 ./go_build.exe
+```
+
+To install the client with live updates:
+
+Run this in powershell 
+```
+iwr -useb https://raw.githubusercontent.com/SirReadsALot/Deeeep.io-Desktop-Client/golang/installers/install-windows.ps1 | iex
 ```
 
 ## Contributing
