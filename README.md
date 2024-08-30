@@ -71,12 +71,6 @@ or by doing:
 ./go_build.exe
 ```
 
-To install the client with live updates:
-
-Run this in powershell 
-```
-iwr -useb https://raw.githubusercontent.com/SirReadsALot/Deeeep.io-Desktop-Client/golang/installers/install-windows.ps1 | iex
-```
 
 ## Contributing
 
