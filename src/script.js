@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </script>
   </html>`
   openList.addEventListener("click", () => {
-    makeWindow(listHTML, 463, 483)
+    makeWindow(listHTML, 463, 483, "animalList")
   })
 
   // Doc Assets
@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </style>
           <script>window.addEventListener('contextmenu', (evt) => evt.preventDefault())</script>
         `
-        makeWindow(evoTree, 865, 663)
+        makeWindow(evoTree, 865, 663, "evoTree")
       }
     }
     keydown = true
