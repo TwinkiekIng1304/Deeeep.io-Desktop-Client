@@ -82,4 +82,4 @@ Join our [Discord server](https://discord.gg/BMHVrKYeem) or check out our [websi
 
 ## License
 
-The Deeeep.io Desktop Client is licensed under the GPL-3.0 license.
+The Deeeep.io Desktop Client is licensed under the MIT license.
