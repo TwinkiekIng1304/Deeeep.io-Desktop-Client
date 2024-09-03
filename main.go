@@ -93,20 +93,9 @@ func main() {
 		ui.Load(`https://deeeep.io` + plugins.QueryPlugins())
 		EvalDefaultScripts(&ui, plugins)
 	})
-
-	var windows map[string]lorca.UI = make(map[string]lorca.UI)
-	ui.Bind("makeWindow", func(content string, width int, height int, id string) {
-		existingWin, exists := windows[id]
-		if exists {
-			delete(windows, id)
-			existingWin.Close()
-		}
-		win, _ := lorca.New("data:text/html,"+url.PathEscape(content), "", width, height, "--remote-allow-origins=*")
-		windows[id] = win
-		<-win.Done()
-		delete(windows, id)
+	ui.Bind("makeWindow", func(content string, width int, height int) {
+		lorca.New("data:text/html,"+url.PathEscape(content), "", width, height, "--remote-allow-origins=*")
 	})
-
 	ui.Bind("exit", func() {
 		ui.Close()
 	})
